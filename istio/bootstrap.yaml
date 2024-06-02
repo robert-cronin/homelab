@@ -15,18 +15,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istiod
+  name: istio
   namespace: argocd
 spec:
   project: system
   source:
-    chart: istiod
-    repoURL: https://istio-release.storage.googleapis.com/charts
-    targetRevision: 1.22.0
-    helm:
-      releaseName: istiod
-      valueFiles:
-        - values.yaml
+    repoURL: 'https://github.com/robert-cronin/homelab.git'
+    targetRevision: HEAD
+    path: istio
   destination:
-    server: "https://kubernetes.default.svc"
-    namespace: istio
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
