@@ -18,7 +18,7 @@ metadata:
   name: istiod
   namespace: argocd
 spec:
-  project: system
+  project: default
   source:
     chart: istiod
     repoURL: https://istio-release.storage.googleapis.com/charts
@@ -30,3 +30,6 @@ spec:
   destination:
     server: "https://kubernetes.default.svc"
     namespace: istio
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
