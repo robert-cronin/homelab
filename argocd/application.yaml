@@ -22,7 +22,7 @@ spec:
   source:
     repoURL: 'https://github.com/robert-cronin/homelab.git'
     targetRevision: HEAD
-    path: argocd/k8s
+    path: argocd
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd
