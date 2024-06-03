@@ -15,14 +15,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: Apps
+  name: apps
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: "https://github.com/robert-cronin/homelab.git"
     targetRevision: HEAD
-    path: ./bootstrap.yaml
+    path: argocd
   destination:
     server: "https://kubernetes.default.svc"
     namespace: argocd
