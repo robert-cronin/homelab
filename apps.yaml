@@ -35,6 +35,12 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    retry:
+      limit: 3
+      backoff:
+        duration: "5s"
+        factor: 2
+        maxDuration: "3m"
 ---
 # istio
 apiVersion: argoproj.io/v1alpha1
@@ -57,6 +63,12 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    retry:
+      limit: 3
+      backoff:
+        duration: "5s"
+        factor: 2
+        maxDuration: "3m"
 ---
 # redis
 apiVersion: argoproj.io/v1alpha1
@@ -79,3 +91,9 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    retry:
+      limit: 3
+      backoff:
+        duration: "5s"
+        factor: 2
+        maxDuration: "3m"
