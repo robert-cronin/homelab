@@ -32,15 +32,6 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-    automated:
-      prune: true
-      selfHeal: true
-    retry:
-      limit: 3
-      backoff:
-        duration: "5s"
-        factor: 2
-        maxDuration: "3m"
 ---
 # istio
 apiVersion: argoproj.io/v1alpha1
@@ -60,21 +51,12 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-    automated:
-      prune: true
-      selfHeal: true
-    retry:
-      limit: 3
-      backoff:
-        duration: "5s"
-        factor: 2
-        maxDuration: "3m"
 ---
 # redis
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: redis
+  name: redis-app
   namespace: argocd
 spec:
   project: default
@@ -88,12 +70,3 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-    automated:
-      prune: true
-      selfHeal: true
-    retry:
-      limit: 3
-      backoff:
-        duration: "5s"
-        factor: 2
-        maxDuration: "3m"
