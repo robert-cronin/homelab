@@ -70,3 +70,22 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+---
+# openfaas
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openfaas-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/robert-cronin/homelab.git"
+    targetRevision: HEAD
+    path: openfaas
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
