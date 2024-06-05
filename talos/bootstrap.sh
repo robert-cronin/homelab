@@ -23,9 +23,10 @@ RPI_8GB_IP="192.168.86.167"
 
 mkdir -p "$CONFIG_DIR"
 
+    # --install-image=ghcr.io/siderolabs/kubelet:v1.29.4 \
 talosctl gen config "tiesanjiao" "https://$RPI_4GB_IP:6443" \
-    --install-image ghcr.io/siderolabs/kubelet:v1.29.4 \
-    --output "$CONFIG_DIR"
+    --install-disk /dev/mmcblk0 \
+    --output-dir "$CONFIG_DIR"
 
 talosctl --talosconfig="$CONFIG_DIR/talosconfig" \
     config endpoint $RPI_4GB_IP $RPI_8GB_IP
@@ -37,13 +38,11 @@ talosctl --talosconfig="$CONFIG_DIR/talosconfig" \
 talosctl config merge "$CONFIG_DIR/talosconfig"
 
 # Apply
-talosctl apply-config --insecure --nodes RPI_4GB_IP --file "$CONFIG_DIR/controlplane.yaml"
+talosctl apply-config --insecure --nodes $RPI_4GB_IP --file "$CONFIG_DIR/controlplane.yaml"
 
 # Bootstrap
 talosctl bootstrap --nodes $RPI_4GB_IP
 
-# Wait for the node to be ready
-talosctl wait --nodes $RPI_4GB_IP
-
-# Apply the rest of the config
-talosctl apply-config --insecure --nodes $RPI_8GB_IP --file "$CONFIG_DIR/node.yaml"
+# Apply config to worker nodes (TODO: include macmini)
+talosctl apply-config --insecure --nodes $RPI_8GB_IP --file "$CONFIG_DIR/worker.yaml"
+# talosctl apply-config --insecure --nodes $RPI_8GB_IP $MACMINI_IP --file "$CONFIG_DIR/worker.yaml"

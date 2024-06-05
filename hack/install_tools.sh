@@ -17,8 +17,3 @@
 
 # Install brew dependencies
 brew install gnupg sops
-
-# Install Talos
-curl -L https://github.com/siderolabs/talos/releases/download/v1.2.7/talosctl-linux-amd64 -o talosctl
-sudo mv talosctl /usr/local/bin/talosctl
-sudo chmod +x /usr/local/bin/talosctl
