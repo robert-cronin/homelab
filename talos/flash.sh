@@ -19,10 +19,9 @@
 # xz -d metal-rpi_4-arm64.img.xz
 # sudo dd if=metal-rpi_4-arm64.img of=/dev/mmcblk0 conv=fsync bs=4M
 
-
 # Define variables
 IMG_URL="https://github.com/siderolabs/talos/releases/download/v1.3.7/metal-rpi_generic-arm64.img.xz"
-TMP_DIR=$(mktemp -d)
+TMP_DIR="$(dirname $0)/tmp"
 IMG_PATH="$TMP_DIR/talos.img.xz"
 DEVICE=$1
 
@@ -36,27 +35,32 @@ if [[ -z $DEVICE ]]; then
     usage
 fi
 
+# Make sure the tmp directory exists
+mkdir -p $TMP_DIR
+
 # Check if running as root
 if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root"
     exit 1
 fi
 
-# Download the img
-echo "Downloading Talos IMG..."
-curl -L -o $IMG_PATH $IMG_URL
+# Only download the img if it doesn't exist
+if [[ ! -f $IMG_PATH ]]; then
+    echo "Downloading Talos IMG..."
+    curl -L -o $IMG_PATH $IMG_URL
+    # Verify the download
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to download IMG"
+        exit 1
+    fi
+    echo "IMG downloaded successfully"
 
-# Verify the download
-if [[ $? -ne 0 ]]; then
-    echo "Failed to download IMG"
-    exit 1
+    # Uncompress the img
+    echo "Uncompressing IMG..."
+    xz -d $IMG_PATH
+else
+    echo "IMG found, skipping download"
 fi
-
-echo "IMG downloaded successfully"
-
-# Uncompress the img
-echo "Uncompressing IMG..."
-xz -d $IMG_PATH
 
 # Confirm device path
 echo "WARNING: This will overwrite all data on $DEVICE"
@@ -81,5 +85,8 @@ if [[ $? -ne 0 ]]; then
     echo "Failed to write IMG to device"
     exit 1
 fi
+
+# Unmount the device
+umount $DEVICE
 
 echo "IMG written to $DEVICE successfully"
