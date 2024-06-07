@@ -147,7 +147,7 @@ machine:
         # Indicates if a bootloader should be installed.
         bootloader: true
         # Indicates if the installation disk should be wiped at installation time.
-        wipe: false
+        wipe: true
         # # Look up disk using disk attributes like model, size, serial and others.
         # diskSelector:
         #     size: 4GB # Disk size.
