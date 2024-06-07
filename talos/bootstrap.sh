@@ -16,26 +16,43 @@
 
 # Define variables
 CWD=$(dirname $0)
-CONFIG_DIR="$CWD/config"
-# MACMINI_IP="192.168.86.xxx" # TODO: include macmini
+CONFIG_DIR="$CWD/dec"
+MACMINI_IP="192.168.86.143"
 RPI_4GB_IP="192.168.86.166"
 RPI_8GB_IP="192.168.86.167"
 
 mkdir -p "$CONFIG_DIR"
 
-    # --install-image=ghcr.io/siderolabs/kubelet:v1.29.4 \
+# Make sure you want to continue
+read -p "This will overwrite the existing configuration. Are you sure you want to continue? (y/n) " -n 1 -r
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+fi
+
 talosctl gen config "tiesanjiao" "https://$RPI_4GB_IP:6443" \
     --install-disk /dev/mmcblk0 \
     --output-dir "$CONFIG_DIR"
 
-talosctl --talosconfig="$CONFIG_DIR/talosconfig" \
-    config endpoint $RPI_4GB_IP $RPI_8GB_IP
+# Rename talosconfig to talosconfig.yaml
+mv "$CONFIG_DIR/talosconfig" "$CONFIG_DIR/talosconfig.yaml"
 
-talosctl --talosconfig="$CONFIG_DIR/talosconfig" \
-    config node $RPI_4GB_IP
+# Move worker.yaml to worker-pi.yaml
+mv "$CONFIG_DIR/worker.yaml" "$CONFIG_DIR/worker-pi.yaml"
+
+# Copy worker-pi.yaml to worker-macmini.yaml
+cp "$CONFIG_DIR/worker-pi.yaml" "$CONFIG_DIR/worker-macmini.yaml"
+
+# Change the install disk in macmini to /dev/nvme0n1p2
+sed -i 's/mmcblk0/nvme0n1p2/g' "$CONFIG_DIR/worker-macmini.yaml"
+
+talosctl --talosconfig="$CONFIG_DIR/talosconfig.yaml" \
+    config endpoint $RPI_4GB_IP
+
+talosctl --talosconfig="$CONFIG_DIR/talosconfig.yaml" \
+    config node $RPI_8GB_IP $MACMINI_IP
 
 # Merge
-talosctl config merge "$CONFIG_DIR/talosconfig"
+talosctl config merge "$CONFIG_DIR/talosconfig.yaml"
 
 # Apply
 talosctl apply-config --insecure --nodes $RPI_4GB_IP --file "$CONFIG_DIR/controlplane.yaml"
@@ -44,5 +61,5 @@ talosctl apply-config --insecure --nodes $RPI_4GB_IP --file "$CONFIG_DIR/control
 talosctl bootstrap --nodes $RPI_4GB_IP
 
 # Apply config to worker nodes (TODO: include macmini)
-talosctl apply-config --insecure --nodes $RPI_8GB_IP --file "$CONFIG_DIR/worker.yaml"
-# talosctl apply-config --insecure --nodes $RPI_8GB_IP $MACMINI_IP --file "$CONFIG_DIR/worker.yaml"
+talosctl apply-config --insecure --nodes $RPI_8GB_IP --file "$CONFIG_DIR/worker-pi.yaml"
+talosctl apply-config --insecure --nodes $MACMINI_IP --file "$CONFIG_DIR/worker-macmini.yaml"

@@ -14,8 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+DEC_DIR="dec"
+ENC_DIR="config"
 
-# https://github.com/getsops/sops
-mkdir -p $GOPATH/src/github.com/getsops/sops/
-git clone https://github.com/getsops/sops.git $GOPATH/src/github.com/getsops/sops/
-cd $GOPATH/src/github.com/getsops/sops/ && make install && cd -
+mkdir -p "$ENC_DIR" "$DEC_DIR"
+
+# Encrypt controlplane.yaml
+sops -e "$DEC_DIR/controlplane.yaml" > "$ENC_DIR/controlplane.enc.yaml"
+
+# Encrypt worker-pi.yaml
+sops -e "$DEC_DIR/worker-pi.yaml" > "$ENC_DIR/worker-pi.enc.yaml"
+
+# Encrypt worker-macmini.yaml
+sops -e "$DEC_DIR/worker-macmini.yaml" > "$ENC_DIR/worker-macmini.enc.yaml"
+
+# Encrypt talosconfig.yaml
+sops -e "$DEC_DIR/talosconfig.yaml" > "$ENC_DIR/talosconfig.enc.yaml"
