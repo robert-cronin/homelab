@@ -22,3 +22,7 @@ cd $GOPATH/src/github.com/getsops/sops/ && make install && cd -
 
 # brew utils
 brew install fluxcd/tap/flux
+
+# arkade
+curl -sSL https://get.arkade.dev | sudo -E sh
+arkade get faas-cli
