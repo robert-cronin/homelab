@@ -32,3 +32,6 @@ spec:
         name: istio
         namespace: istio-system
       interval: 1m
+  values:
+    service:
+      type: NodePort
