@@ -31,6 +31,24 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/robert-cronin/homelab.git"
+    targetRevision: HEAD
+    path: rabbitmq
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
 # TODO: migrate these over to argo
 # ---
 # # istio
