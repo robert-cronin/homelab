@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/sh
 # Copyright 2024 Robert Cronin
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-POD_NAME=$1
-POD_NAMESPACE=$2
+# create it like so:
+# kubectl cnpg pgadmin4 -n jueju-db jueju-db --mode desktop
 
-if [[ -z $POD_NAME || -z $POD_NAMESPACE ]]; then
-    echo "Usage: $0 POD_NAME POD_NAMESPACE"
-    exit 1
-fi
+# spin up:
+# kubectl rollout status deployment cluster-example-pgadmin4
 
-kubectl debug -n $POD_NAMESPACE -it $POD_NAME --image=busybox --target=$POD_NAME
+# access:
+kubectl port-forward deployment/jueju-db-pgadmin4 -n jueju-db 8080:80
